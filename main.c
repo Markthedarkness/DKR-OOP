@@ -5,40 +5,48 @@
 class ComplexNumber {
 private:
     double real; // Дійсна частина
-    double imag; // Уявна частина
+    double imaginary; // Уявна частина
 
 public:
-    // Конструктор
-    ComplexNumber(double real_part, double imag_part) : real(real_part), imag(imag_part) {
-        if (!std::isfinite(real_part) || !std::isfinite(imag_part)) {
+    // Конструктор з перевіркою вхідних даних
+    ComplexNumber(double realPart, double imaginaryPart) {
+        if (!std::isfinite(realPart) || !std::isfinite(imaginaryPart)) {
             throw std::invalid_argument("Real and imaginary parts must be finite numbers");
         }
+        real = realPart;
+        imaginary = imaginaryPart;
     }
 
-    // Метод для отримання дійсної частини
-    double getReal() const {
-        return real;
+    // Гетери для отримання частин числа
+    double getReal() const { return real; }
+    double getImaginary() const { return imaginary; }
+
+    // Метод для обчислення модуля числа
+    double modulus() const {
+        return std::sqrt(real * real + imaginary * imaginary);
     }
 
-    // Метод для отримання уявної частини
-    double getImag() const {
-        return imag;
+    // Метод для додавання комплексних чисел
+    ComplexNumber add(const ComplexNumber& other) const {
+        return ComplexNumber(real + other.real, imaginary + other.imaginary);
     }
 
+    // Метод для виведення числа на екран
+    void print() const {
+        if (imaginary >= 0) {
+            std::cout << real << " + " << imaginary << "i";
+        } else {
+            std::cout << real << " - " << -imaginary << "i";
+        }
+    }
+};
+
+class ComplexCalculator {
+public:
     // Метод для обчислення модуля суми двох комплексних чисел
     static double modulusOfSum(const ComplexNumber& num1, const ComplexNumber& num2) {
-        double sum_real = num1.real + num2.real;
-        double sum_imag = num1.imag + num2.imag;
-        return std::sqrt(sum_real * sum_real + sum_imag * sum_imag);
-    }
-
-    // Метод для виведення комплексного числа у зрозумілому форматі
-    void print() const {
-        if (imag >= 0) {
-            std::cout << real << " + " << imag << "i";
-        } else {
-            std::cout << real << " - " << std::abs(imag) << "i";
-        }
+        ComplexNumber sum = num1.add(num2);
+        return sum.modulus();
     }
 };
 
@@ -58,7 +66,7 @@ int main() {
         std::cout << std::endl;
 
         // Обчислення та виведення модуля суми
-        double modulus = ComplexNumber::modulusOfSum(num1, num2);
+        double modulus = ComplexCalculator::modulusOfSum(num1, num2);
         std::cout << "Модуль суми: " << modulus << std::endl;
     }
     catch (const std::invalid_argument& e) {
